@@ -5,4 +5,4 @@
 `docker build -t ticketing/auth .`
 
 ## To build and deploy using skaffold
-`skaffold dev`
+Run `skaffold dev`
