@@ -2,6 +2,7 @@
 import express from 'express';
 import 'express-async-errors';
 import { json } from 'body-parser';
+import mongoose from 'mongoose';
 
 import { currentUserRouter } from './routes/current-user';
 import { signinRouter } from './routes/signin';
@@ -25,7 +26,19 @@ app.get('*', () => {
 
 app.use(errorHandler);
 
-const port = 3000;
-app.listen(port, () => {
-    console.log(`Listening on port ${port}!!!`);
-});
+const start = async () => {
+    try {
+        const DBURL = 'mongodb://auth-mongo-srv:27017/ticketing-auth';
+        await mongoose.connect(DBURL);
+        console.log("Database connected");
+    } catch (error) {
+        console.error(error);
+    }
+
+    const PORT = 3000;
+    app.listen(PORT, () => {
+        console.log(`Listening on port ${PORT}!!!`);
+    });
+};
+
+start();
