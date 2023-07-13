@@ -1,7 +1,6 @@
 import express from 'express';
 
-import { currentUser } from '../middlewares/current-user';
-import { requireAuth } from '../middlewares/require-auth';
+import { currentUser, requireAuth } from '@satik-tickets/common';
 
 const router = express.Router();
 
