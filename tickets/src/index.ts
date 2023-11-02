@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import { app } from './app';
+import { natsWrapper } from './nats-wrapper';
 
 const start = async () => {
     if (!process.env.JWT_KEY) {
@@ -11,6 +12,8 @@ const start = async () => {
     }
 
     try {
+        await natsWrapper.connect('ticketing', 'randomString', 'http://nats-srv:4222');
+
         const DBURL = process.env.MONGO_URI;
         await mongoose.connect(DBURL);
         console.log("Database connected");
