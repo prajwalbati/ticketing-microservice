@@ -5,7 +5,7 @@ import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
 import { errorHandler, NotFoundError, currentUser } from '@satik-tickets/common';
 
-import { createOrderRouter } from './routes/new';
+import { newOrderRouter } from './routes/new';
 import { showOrderRouter } from './routes/show';
 import { deleteOrderRouter } from './routes/delete';
 import { indexOrderRouter } from './routes';
@@ -22,7 +22,7 @@ app.use(
 
 app.use(currentUser);
 
-app.use(createOrderRouter);
+app.use(newOrderRouter);
 app.use(showOrderRouter);
 app.use(indexOrderRouter);
 app.use(deleteOrderRouter);
