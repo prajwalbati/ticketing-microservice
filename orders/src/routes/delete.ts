@@ -2,11 +2,13 @@ import express, { Request, Response } from 'express';
 import { NotFoundError, requireAuth, NotAuthorizedError } from '@satik-tickets/common';
 
 import { Order, OrderStatus } from '../models/order';
+import { OrderCancelledPublisher } from '../events/order-cancelled-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
 router.delete('/api/orders/:orderId', requireAuth, async (req: Request, res: Response) => {
-    const order = await Order.findById(req.params.orderId);
+    const order = await Order.findById(req.params.orderId).populate('ticket');
 
     if (!order) {
         throw new NotFoundError();
@@ -17,7 +19,12 @@ router.delete('/api/orders/:orderId', requireAuth, async (req: Request, res: Res
     order.status = OrderStatus.Cancelled;
     await order.save();
 
-    //publish event
+    new OrderCancelledPublisher(natsWrapper.client).publish({
+        id: order.id,
+        ticket: {
+            id: order.ticket.id
+        }
+    })
 
     return res.status(204).send(order);
 });
