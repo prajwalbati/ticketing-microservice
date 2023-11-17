@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import { validateRequest, NotAuthorizedError, NotFoundError, requireAuth } from '@satik-tickets/common';
+import { validateRequest, NotAuthorizedError, NotFoundError, requireAuth, BadRequestError } from '@satik-tickets/common';
 
 import { Ticket } from '../models/ticket';
 import { natsWrapper } from '../nats-wrapper';
@@ -20,6 +20,9 @@ router.put('/api/tickets/:id', requireAuth, [
     const ticket = await Ticket.findById(req.params.id);
     if(!ticket) {
         throw new NotFoundError();
+    }
+    if (ticket.orderId) {
+        throw new BadRequestError('Cannot edit a reserved ticket');
     }
     if (ticket.userId !== req.currentUser!.id) {
         throw new NotAuthorizedError();
